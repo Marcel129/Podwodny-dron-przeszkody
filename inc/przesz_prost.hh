@@ -17,8 +17,8 @@ class przesz_prost : public przeszkoda, public prostopadloscian
 {
 public:
     przesz_prost() : prostopadloscian(){};
-    przesz_prost(std::shared_ptr<drawNS::Draw3DAPI> api, double d, double s, double w, double x, double y, double z) : 
-    prostopadloscian(api,d, s, w, x, y, z){};
+    przesz_prost(std::shared_ptr<drawNS::Draw3DAPI> api, double d, double s, double w, double x, double y, double z,std::string zadany_kolor="green") : 
+    prostopadloscian(api,d, s, w, x, y, z,zadany_kolor){};
 
     bool czy_kolizja(const Wektor3D &,double)const override;
 };

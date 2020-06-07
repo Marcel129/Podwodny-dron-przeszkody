@@ -27,3 +27,4 @@ double Wektor<double, ROZ>::dlugosc() const
     return 0;//mamy do czynienia z wektorem zerowym
 }
 
+

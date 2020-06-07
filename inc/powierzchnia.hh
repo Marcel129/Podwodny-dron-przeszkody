@@ -17,13 +17,14 @@ class powierzchnia : public int_rysowania, public przeszkoda
     double wysokosc_polozenia;
 
 public:
-    powierzchnia(std::shared_ptr<drawNS::Draw3DAPI> wskazane_api, double wys)
+    powierzchnia(std::shared_ptr<drawNS::Draw3DAPI> wskazane_api, double wys,std::string zadany_kolor = "grey")
     {
         wysokosc_polozenia = wys;
+        kolor=zadany_kolor;
         api = wskazane_api;
         ID = -20;
     };
-    void draw(std::string kolor = "grey");
+    void draw();
     bool czy_kolizja(const Wektor3D & srodek,double promien_drona) const override
     {
         if (wysokosc_polozenia > 0) //jeśli rozptrujemy tafle wody

@@ -1,8 +1,34 @@
 #include "bryla.hh"
 
-prostopadloscian::prostopadloscian(std::shared_ptr<drawNS::Draw3DAPI> w_api, double d, double s, double w, double x, double y, double z)
+int bryla::liczba_istniejacych(0);
+int bryla::liczba_stworzonych(0);
+
+bryla::bryla(const bryla &B)
 {
+    srodek = B.srodek;
+    przesuniecie = B.przesuniecie;
+    orientacja = B.orientacja;
+    odsuniecie = B.odsuniecie;
+    orientacja_wlasna = B.orientacja_wlasna;
+
+    ++liczba_stworzonych;
+    ++liczba_istniejacych;
+};
+
+bryla::bryla()
+{
+    kolor = "green";
+    ++liczba_stworzonych;
+    ++liczba_istniejacych;
+};
+
+prostopadloscian::prostopadloscian(std::shared_ptr<drawNS::Draw3DAPI> w_api, double d, double s, double w, double x, double y, double z, std::string zadany_kolor)
+{
+    ++liczba_stworzonych;
+    ++liczba_istniejacych;
+
     ID = -20;
+    kolor = zadany_kolor;
     Macierz_Obrotu M_jednostkowa;
     orientacja = orientacja_wlasna = M_jednostkowa;
     api = w_api;
@@ -13,6 +39,9 @@ prostopadloscian::prostopadloscian(std::shared_ptr<drawNS::Draw3DAPI> w_api, dou
     przesuniecie = wz;
     Wektor3D W(szerokosc, dlugosc, wysokosc);
     W = W * 0.5;
+    srodek_czola[0] = srodek[0];
+    srodek_czola[1] = srodek[1] - dlugosc / 2;
+    srodek_czola[2] = srodek[2];
     wierzcholki[0][0] = srodek[0] + W[0];
     wierzcholki[0][1] = srodek[1] - W[1];
     wierzcholki[0][2] = srodek[2] - W[2];
@@ -38,12 +67,10 @@ prostopadloscian::prostopadloscian(std::shared_ptr<drawNS::Draw3DAPI> w_api, dou
     wierzcholki[7][1] = srodek[1] - W[1];
     wierzcholki[7][2] = srodek[2] + W[2];
     przesun(WT);
-    cout << "Zainicjowano prostopadloscian w punkcie: " << srodek << endl;
 }
 
-void prostopadloscian::draw(std::string zadany_kolor)
+void prostopadloscian::draw()
 {
-    kolor = zadany_kolor;
     usun(); //usunięcie poprzedniego widoku drona
     //rysowanie drona o zadanych wymiarach
     ID = api->draw_polyhedron(vector<vector<Point3D>>{{drawNS::Point3D(wierzcholki[0][0], wierzcholki[0][1], wierzcholki[0][2]),
@@ -61,11 +88,14 @@ void prostopadloscian::draw(std::string zadany_kolor)
 }
 
 void prostopadloscian::aktualizuj_wierzcholki(const Wektor3D &W2, const Macierz_Obrotu &M) //domyslnie nie obracaj i nie przesuwaj
-{   
+{
     orientacja = M * orientacja;
     przesuniecie = W2 + przesuniecie;
     Wektor3D W(szerokosc, dlugosc, wysokosc);
     W = W * 0.5;
+    srodek_czola[0] = srodek[0];
+    srodek_czola[1] = srodek[1] - dlugosc / 2;
+    srodek_czola[2] = srodek[2];
     wierzcholki[0][0] = srodek[0] + W[0];
     wierzcholki[0][1] = srodek[1] - W[1];
     wierzcholki[0][2] = srodek[2] - W[2];
@@ -93,4 +123,5 @@ void prostopadloscian::aktualizuj_wierzcholki(const Wektor3D &W2, const Macierz_
 
     for (int i = 0; i < 8; ++i)
         wierzcholki[i] = orientacja * (orientacja_wlasna * wierzcholki[i] + get_od()) + przesuniecie;
+    srodek_czola = orientacja * (orientacja_wlasna * srodek_czola + get_od()) + przesuniecie;
 }

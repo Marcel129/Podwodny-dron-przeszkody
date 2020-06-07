@@ -38,10 +38,10 @@ ${OBJ}/int_rysowania.o: src/int_rysowania.cpp inc/int_rysowania.hh inc/Dr3D_gnup
 ${OBJ}/powierzchnia.o: src/powierzchnia.cpp inc/powierzchnia.hh inc/int_rysowania.hh inc/Dr3D_gnuplot_api.hh inc/przeszkoda.hh
 	g++ ${CPPFLAGS} -o ${OBJ}/powierzchnia.o src/powierzchnia.cpp
 
-${OBJ}/wirnik.o: inc/wirnik.hh src/wirnik.cpp inc/Macierz.hh inc/bryla.hh inc/Wektor.hh inc/parametry_drona.hh
+${OBJ}/wirnik.o: inc/wirnik.hh src/wirnik.cpp inc/Macierz.hh inc/bryla.hh inc/Wektor.hh inc/parametry_drona.hh inc/int_rysowania.hh
 	g++ ${CPPFLAGS} -o ${OBJ}/wirnik.o src/wirnik.cpp
 
-${OBJ}/przesz_prost.o: inc/przesz_prost.hh src/przesz_prost.cpp inc/bryla.hh inc/przeszkoda.hh
+${OBJ}/przesz_prost.o: inc/przesz_prost.hh src/przesz_prost.cpp inc/bryla.hh inc/przeszkoda.hh inc/int_rysowania.hh
 	g++ ${CPPFLAGS} -o ${OBJ}/przesz_prost.o src/przesz_prost.cpp
 
 

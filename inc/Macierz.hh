@@ -33,7 +33,7 @@ public:
   Wektor<TYP, ROZMIAR> operator*(const Wektor<TYP, ROZMIAR> W) const;   //mnożenie macierzy przez wektor
   Macierz<TYP, ROZMIAR> operator*(const Macierz<TYP, ROZMIAR> M) const; //mnożenie macierzy przez macierz
   bool operator == (const Macierz<TYP, ROZMIAR> M)const;
-  Macierz<TYP,ROZMIAR> inicjuj_jednostkowa();
+  void inicjuj_jednostkowa();
   Macierz<TYP,ROZMIAR> macierz_odwrotna();//obliczenie macierzy odwrotnej
   
   void transponuj_macierz(void);

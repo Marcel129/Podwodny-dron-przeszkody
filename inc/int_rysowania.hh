@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "Dr3D_gnuplot_api.hh"
-using namespace std;
+
 class int_rysowania
 {
 protected:
@@ -13,8 +13,8 @@ protected:
     std::shared_ptr<drawNS::Draw3DAPI> api;
 
 public:
-    void usun() { if(ID != pomocnicze_id)  api->erase_shape(ID);else { ++pomocnicze_id;api->erase_shape(ID);cout << "to api istnieje!" << endl; }}//???????????????
-    void draw();
+    void usun() { if(ID != pomocnicze_id)  api->erase_shape(ID);else { ++pomocnicze_id;api->erase_shape(ID); }}
+    //void draw();
 };
 
 #endif

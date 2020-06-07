@@ -119,18 +119,15 @@ TYP Macierz<TYP, ROZMIAR>::wyz_gauss()
         for (int i = 1 + k; i < ROZMIAR; ++i)
         {
             w = k; //kopiuje i do w, żeby móc je inkrementować przy zamienianiu wierszy
-            while (std::abs(M[k][k]) < 0.0000000000001 && w < ROZMIAR)
+            while (std::abs(M[k][k]) < 0.0000000000001 && w + 1 < ROZMIAR)
             {
                 std::swap(M[k], M[++w]);
                 znak = -znak;
             }
-            if (std::abs(M[k][k]) > 0.0000000000001) //jeżeli po zamianach
+            if (std::abs(M[k][k]) > 0.0000000000001)
                 M[i] = M[i] - M[k] * (M[i][k] / M[k][k]);
-            else
-            {
-                std::cout << "Wyznacznik macierzy jest równy 0." << std::endl;
-                exit(1);
-            }
+            else //jeżeli po zamianach nie da się obliczyć wyznacznika, znaczy, że cała kolumna jest równa 0 i wyznacznik jest równy 0
+                return 0;
         }
     }
     for (int i = 0; i < ROZMIAR; ++i)
@@ -140,7 +137,7 @@ TYP Macierz<TYP, ROZMIAR>::wyz_gauss()
 }
 
 template <typename TYP, int ROZMIAR>
-Macierz<TYP, ROZMIAR> Macierz<TYP, ROZMIAR>::inicjuj_jednostkowa()
+void Macierz<TYP, ROZMIAR>::inicjuj_jednostkowa()
 {
     for (int k = 0; k < ROZMIAR; ++k)
     {
@@ -171,32 +168,26 @@ Macierz<TYP, ROZMIAR> Macierz<TYP, ROZMIAR>::macierz_odwrotna()
 {
     Macierz<TYP, ROZMIAR> macierz_jednostkowa, macierz_odwrotna, M = tablica;
     macierz_jednostkowa.inicjuj_jednostkowa();
-    if(M==macierz_jednostkowa) return macierz_jednostkowa;
+    if (M == macierz_jednostkowa)//przyspieszam obliczenia w przypadku macierzy jednostkowej
+        return macierz_jednostkowa;
 
     double wyz_g = M.wyz_gauss(); //oblicz wyznacznik główny macierzy
     if (std::abs(wyz_g) > 0.00000000001)
     {
         for (int k = 0; k < ROZMIAR; ++k)
         {
-            //M.transponuj_macierz(); //zmień układ macierzy na kolumnowy, aby móc zamieniać kolumny z wektorem wyrazów wolnych
+            std::cout << M << std::endl;
+            M.transponuj_macierz(); //zmień układ macierzy na kolumnowy, aby móc zamieniać kolumny z wektorem wyrazów wolnych
 
             for (int i = 0; i < ROZMIAR; ++i)
             {
-                cout << "M przed\n"
-                     << M << "M jed\n"
-                     << macierz_jednostkowa;
-                cout << "1 std::swap(M[i], macierz_jednostkowa[k])" << endl
-                     << M[i] << macierz_jednostkowa[k] << endl;
                 std::swap(M[i], macierz_jednostkowa[k]);
-                cout << "M po\n"
-                     << M << "M jed\n"
-                     << macierz_jednostkowa;
-                cout << "2 std::swap(M[i], macierz_jednostkowa[k])" << endl
-                     << M[i] << macierz_jednostkowa[k] << endl; //podmieniaj kolejne kolumny na wektor wyrazów wolnych
+                M.transponuj_macierz();                         //zmień układ macierzy na kolumnowy, aby móc zamieniać kolumny z wektorem wyrazów wolnych
                 macierz_odwrotna[k][i] = M.wyz_gauss() / wyz_g; //oblicz wyznacznik powstałej macierzy i podziel go przez wyznacznik główny, otrzymując kolejne pierwiastki równania
+                M.transponuj_macierz();                         //zmień układ macierzy na kolumnowy, aby móc zamieniać kolumny z wektorem wyrazów wolnych
                 std::swap(M[i], macierz_jednostkowa[k]);        //zamień wektory spowrotem, aby móc podmienić następne kolumny macierzy
             }
-            //M.transponuj_macierz(); //przywróć macierz współczynników do postaci wejściowej
+            M.transponuj_macierz(); //przywróć macierz współczynników do postaci wejściowej
         }
     }
     else

@@ -1,5 +1,8 @@
 #include "Wektor.hh"
 
+int Wektor3D::liczba_istniejacych(0);
+int Wektor3D::liczba_stworzonych(0);
+
 template <typename TYP, int ROZMIAR>
 std::istream &operator>>(std::istream &strWej, Wektor<TYP, ROZMIAR> &W)
 {
@@ -162,3 +165,23 @@ Wektor<TYP, ROZMIAR> Wektor<TYP, ROZMIAR>::operator-(const Wektor &W2) const //o
 
   return W;
 }
+
+Wektor3D::Wektor3D(double x, double y, double z)
+{
+  tablica[0] = x;
+  tablica[1] = y;
+  tablica[2] = z;
+  ++liczba_istniejacych;
+  ++liczba_stworzonych;
+}
+
+Wektor3D::Wektor3D(const Wektor3D &W)
+{
+  tablica[0] = W[0];
+  tablica[1] = W[1];
+  tablica[2] = W[2];
+  ++liczba_istniejacych;
+  ++liczba_stworzonych;
+}
+
+

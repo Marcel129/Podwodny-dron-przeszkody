@@ -12,7 +12,8 @@ protected:
 
 public:
     Wirnik():prostopadloscian(){};
-    Wirnik(std::shared_ptr<drawNS::Draw3DAPI> wskazane_api, double d, double s, double w, double x, double y, double z):prostopadloscian(wskazane_api,d,s,w,x,y,z){};
+    Wirnik(std::shared_ptr<drawNS::Draw3DAPI> wskazane_api, double d, double s, double w, double x, double y, double z,std::string zadany_kolor="green")
+    :prostopadloscian(wskazane_api,d,s,w,x,y,z,zadany_kolor){};
 };
 
 #endif

@@ -41,18 +41,18 @@ public:
 *\param [in] d - długość tworzonego drona
 *\param [in] s - szerokość tworzonego drona
 *\param [in] w - wysokość tworzonego drona
-*\param [in] x - X-ksowa składowa punktu środka drona
-*\param [in] y - Y-kowa składowa punktu środka drona
-*\param [in] z - Z-towa składowa punktu środka drona
+*\param [in] x - X-owa składowa punktu środka drona
+*\param [in] y - Y-owa składowa punktu środka drona
+*\param [in] z - Z-owa składowa punktu środka drona
 *
 */
-    dron(std::shared_ptr<drawNS::Draw3DAPI> wskazane_api, double d, double s, double w, double x, double y, double z);
+    dron(std::shared_ptr<drawNS::Draw3DAPI> wskazane_api, double d, double s, double w, double x, double y, double z, std::string zadany_kolor="green");
     /*!
 *\brief Przemieszcza drona o wskazany wektor
 *
 *\param [in] W - wektor, o jaki ma zostać przemieszczony dron
 */
-    void move(const Wektor3D &W, vector<std::shared_ptr<przeszkoda>>); //animowany ruch drona
+    void move(double zadana_odleglosc,double kat_wznoszenia,const Wektor3D &W, vector<std::shared_ptr<przeszkoda>>); //animowany ruch drona
 /*!
 *\brief Obraca drona wokół wskazanej osi o wskazany kąt
 *
@@ -63,12 +63,12 @@ public:
 /*!
 *\brief Rysuje drona w jego aktualnym położeniu
 */
-    void draw(string kolor = "green");
+    void draw();
 /*!
 *\brief Zwraca promien sfery rezprezentującej drona podczas detekcji kolizji
 */
     double get_radius()const{return promien_banki_bezpieczenstwa;}
-    Wektor3D get_przes(){return korpus.get_przes();}
+    Wektor3D get_przes() {return korpus.get_przes();}
     bool czy_kolizja(const Wektor3D &, double ) const override;
 };
 

@@ -27,13 +27,15 @@ int main()
 
   vector<std::shared_ptr<przeszkoda>> przeszkody;
 
-  std::shared_ptr<przesz_prost> bloczek(new przesz_prost(api, 4, -2, 4, -6, 3, -4, "yellow"));
+  std::shared_ptr<przesz_prost> bloczek(new przesz_prost(api, 4, 2, 4, -6, 3, -4, "yellow"));
+  std::shared_ptr<przesz_prost> bloczek2(new przesz_prost(api, 6, 2, 1, 6, -3, 4, "red"));
   std::shared_ptr<powierzchnia> dno(new powierzchnia(api, -9.5));
   std::shared_ptr<dron> drugi_dron(new dron(api, D_DRONA, S_DRONA, W_DRONA, 5, 5, -5, "blue"));
   std::shared_ptr<dron> pierwszy_dron(new dron(api, D_DRONA, S_DRONA, W_DRONA, -5, -5, 5));
   std::shared_ptr<dron> dron_sterowany(new dron(api, D_DRONA, S_DRONA, W_DRONA, -5, -5, -5));
   std::shared_ptr<powierzchnia> lustro_wody(new powierzchnia(api, 8.5, "blue"));
   przeszkody.push_back(bloczek);
+  przeszkody.push_back(bloczek2);
   przeszkody.push_back(lustro_wody);
   przeszkody.push_back(dno);
   przeszkody.push_back(drugi_dron);
@@ -44,6 +46,7 @@ int main()
   lista_dronow.push_back(drugi_dron);
 
   bloczek->draw();
+  bloczek2->draw();
   dno->draw();
   lustro_wody->draw();
   drugi_dron->draw();

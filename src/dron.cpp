@@ -27,7 +27,7 @@ void dron::draw()
 }
 
 void dron::move(double zadana_odleglosc, double kat_wznoszenia, const Wektor3D &W, vector<std::shared_ptr<przeszkoda>> przeszkody)
-{ 
+{
     bool czy_kolizja = false;
     int ilosc_krokow = 0;
     kat_wznoszenia = kat_wznoszenia * 3.14 / 180; //na radiany
@@ -37,44 +37,46 @@ void dron::move(double zadana_odleglosc, double kat_wznoszenia, const Wektor3D &
     for (int i = 0; i < ROZ; ++i)
     {
         if (std::abs(wektor_orientacji[i]) < 0.00000000001)
-            wektor_orientacji[i] = 0;//posprzątaj śmieci z błędów obliczeń
+            wektor_orientacji[i] = 0; //posprzątaj śmieci z błędów obliczeń
     }
-    cout << "wektor_orientacji: " << wektor_orientacji << endl;
     if (std::abs(wektor_orientacji[0]) <= 0.000000000001 && !(std::abs(wektor_orientacji[1]) <= 0.000000000001))
     {
         x2 = 0;
         y2 = MIN_DYST * (std::abs(wektor_orientacji[1]) / wektor_orientacji[1]); //wyciągnij znak, żeby znać kierunek
-        cout << "x = 0, y != 0\n";
     }
     else if (std::abs(wektor_orientacji[1]) <= 0.000000000001 && !(std::abs(wektor_orientacji[0]) <= 0.000000000001))
     {
         x2 = MIN_DYST * (std::abs(wektor_orientacji[0]) / wektor_orientacji[0]);
         y2 = 0;
-        cout << "x != 0, y = 0\n";
     }
     else if (std::abs(wektor_orientacji[1]) <= 0.000000000001 && std::abs(wektor_orientacji[0]) <= 0.000000000001)
     {
         x2 = 0;
         y2 = 0;
-        cout << "x = 0, y = 0\n";
     }
     else
     {
-        cout << "x != 0, y != 0\n";
         x2 = MIN_DYST;
-        y2 = x2 *  wektor_orientacji[1] / wektor_orientacji[0];
+        if (wektor_orientacji[0] < 0)
+            x2 = -x2;
+        y2 = x2 * wektor_orientacji[1] / wektor_orientacji[0];
     }
-    if (std::abs(std::abs(kat_wznoszenia) - 1.57) > 0.00001)
+    if (std::abs(std::abs(kat_wznoszenia) - 1.57) > 0.00001) //kat wznoszenia != 90st
         z2 = tan(kat_wznoszenia) * sqrt(x2 * x2 + y2 * y2);
-    else
+    else if (kat_wznoszenia > 1.54 && kat_wznoszenia < 1.60)
     {
-        z2 = zadana_odleglosc; //wynurzanie
+        z2 = MIN_DYST; //wynurzanie
+        x2 = 0;
+        y2 = 0;
+    }
+    else if (kat_wznoszenia < -1.54 && kat_wznoszenia > -1.60)
+    {
+        z2 = -MIN_DYST; //zanurzanie
         x2 = 0;
         y2 = 0;
     }
 
     Wektor3D krok(x2, y2, z2); //oblicz wektor cząstkowy
-    cout << "krok: " << krok << endl;
     Wektor3D przes_wyjsciowe = przesuniecie, wektor_wyj = korpus.get_przes();
     Wektor3D zapamietaj_przesuniecie_k = korpus.get_przes(); //zapamietaj aktualne polozenie
     Wektor3D zapamietaj_przesuniecie_wp = Wir_prawy.get_przes();

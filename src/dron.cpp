@@ -27,54 +27,60 @@ void dron::draw()
 }
 
 void dron::move(double zadana_odleglosc, double kat_wznoszenia, const Wektor3D &W, vector<std::shared_ptr<przeszkoda>> przeszkody)
-{ /*
-    bool czy_kolizja = false; 
-    int ilosc_krokow = 0;
-    kat_wznoszenia = kat_wznoszenia*3.14/180;//na radiany
-    double x2=0.1,y2, z2;
-    Wektor3D wektor_orientacji = korpus.get_sr_czola() - korpus.get_przes();
-    wektor_orientacji[0] != 0 ? y2 = x2 * wektor_orientacji[1] / wektor_orientacji[0] : y2 = 0;
-    z2 = tan(kat_wznoszenia)*sqrt(x2*x2+y2*y2);
-    Wektor3D wek(x2, y2, z2), wektor_wyj = korpus.get_przes();
-    for (; (korpus.get_przes() - wektor_wyj).dlugosc() < zadana_odleglosc; ++ilosc_krokow)
-        przesun(wek); 
-    Wektor3D o_ile_sie_przesunal;
-    if (std::abs(W[0]) > 0.000000001 || std::abs(W[1]) > 0.000000001 || std::abs(W[2]) > 0.000000001) //sprawdzenie czy wektor przesuniecia jest niezerowy
-    {
-        Wektor3D wektor_orientacji = korpus.get_sr_czola() - korpus.get_przes(), zadany_wektor_orientacji = W, wek_zer_x(1, 0, 0);
-        double kat_roboczy, kat_orientacji_drona, kat_zadanej_orientacji;
-
-        Wektor3D rzut_w_orien(wektor_orientacji[0], wektor_orientacji[1], 0), rzut_zad_w_orien(zadany_wektor_orientacji[0], zadany_wektor_orientacji[1], 0);
-        if (rzut_w_orien.iloczyn_skalarny(rzut_zad_w_orien) / (rzut_w_orien.dlugosc() * rzut_zad_w_orien.dlugosc() >= 0))
-            kat_roboczy = acos(rzut_w_orien.iloczyn_skalarny(rzut_zad_w_orien) / (rzut_w_orien.dlugosc() * rzut_zad_w_orien.dlugosc())) * 180 / 3.14;
-        else
-            kat_roboczy = -acos(rzut_w_orien.iloczyn_skalarny(rzut_zad_w_orien) / (rzut_w_orien.dlugosc() * rzut_zad_w_orien.dlugosc())) * 180 / 3.14;
-        //obliczam kąt obrotu w płaszczyźnie XY, stad z=0
-        rotate('z', kat_roboczy);
-*/
+{ 
     bool czy_kolizja = false;
     int ilosc_krokow = 0;
     kat_wznoszenia = kat_wznoszenia * 3.14 / 180; //na radiany
     double x2 = MIN_DYST, y2, z2;
-    Wektor3D wektor_orientacji = korpus.get_sr_czola() - korpus.get_przes();
-    wektor_orientacji[0] != 0 ? y2 = x2 * wektor_orientacji[1] / wektor_orientacji[0] : y2 = 0;
+    Wektor3D wektor_orientacji = (korpus.get_sr_czola() - korpus.get_przes());
+
+    for (int i = 0; i < ROZ; ++i)
+    {
+        if (std::abs(wektor_orientacji[i]) < 0.00000000001)
+            wektor_orientacji[i] = 0;//posprzątaj śmieci z błędów obliczeń
+    }
+    cout << "wektor_orientacji: " << wektor_orientacji << endl;
+    if (std::abs(wektor_orientacji[0]) <= 0.000000000001 && !(std::abs(wektor_orientacji[1]) <= 0.000000000001))
+    {
+        x2 = 0;
+        y2 = MIN_DYST * (std::abs(wektor_orientacji[1]) / wektor_orientacji[1]); //wyciągnij znak, żeby znać kierunek
+        cout << "x = 0, y != 0\n";
+    }
+    else if (std::abs(wektor_orientacji[1]) <= 0.000000000001 && !(std::abs(wektor_orientacji[0]) <= 0.000000000001))
+    {
+        x2 = MIN_DYST * (std::abs(wektor_orientacji[0]) / wektor_orientacji[0]);
+        y2 = 0;
+        cout << "x != 0, y = 0\n";
+    }
+    else if (std::abs(wektor_orientacji[1]) <= 0.000000000001 && std::abs(wektor_orientacji[0]) <= 0.000000000001)
+    {
+        x2 = 0;
+        y2 = 0;
+        cout << "x = 0, y = 0\n";
+    }
+    else
+    {
+        cout << "x != 0, y != 0\n";
+        x2 = MIN_DYST;
+        y2 = x2 *  wektor_orientacji[1] / wektor_orientacji[0];
+    }
     if (std::abs(std::abs(kat_wznoszenia) - 1.57) > 0.00001)
         z2 = tan(kat_wznoszenia) * sqrt(x2 * x2 + y2 * y2);
     else
     {
-        z2 = zadana_odleglosc;
+        z2 = zadana_odleglosc; //wynurzanie
         x2 = 0;
         y2 = 0;
     }
 
-    //int ilosc_krokow = W.dlugosc() / MIN_DYST;
     Wektor3D krok(x2, y2, z2); //oblicz wektor cząstkowy
+    cout << "krok: " << krok << endl;
     Wektor3D przes_wyjsciowe = przesuniecie, wektor_wyj = korpus.get_przes();
     Wektor3D zapamietaj_przesuniecie_k = korpus.get_przes(); //zapamietaj aktualne polozenie
     Wektor3D zapamietaj_przesuniecie_wp = Wir_prawy.get_przes();
     Wektor3D zapamietaj_przesuniecie_wl = Wir_lewy.get_przes();
 
-    for (; (korpus.get_przes() - wektor_wyj).dlugosc() < zadana_odleglosc && !czy_kolizja; ++ilosc_krokow) //animuj ruch
+    for (; (korpus.get_przes() - wektor_wyj).dlugosc() < zadana_odleglosc && !(std::abs(wektor_orientacji[1]) <= 0.000000000001 && std::abs(wektor_orientacji[0]) <= 0.000000000001) && !czy_kolizja; ++ilosc_krokow) //animuj ruch
     {
         Macierz_Obrotu M('y', 30 * (ilosc_krokow % 3));
         Wir_lewy.set_own_orientation(M);
@@ -97,21 +103,9 @@ void dron::move(double zadana_odleglosc, double kat_wznoszenia, const Wektor3D &
     korpus.set_przes(zapamietaj_przesuniecie_k); //unikam bledu numerycznego powstałego przy animacji wykonujac pojedyncze przesuniecie
     Wir_prawy.set_przes(zapamietaj_przesuniecie_wp);
     Wir_lewy.set_przes(zapamietaj_przesuniecie_wl);
-    przesuniecie = przes_wyjsciowe; /*
-    cout << " kat_roboczy: " << kat_roboczy << endl;
-    cout << " kat_zadanej_orientacji: " << kat_zadanej_orientacji << endl;
-    cout << " kat_orientacji_drona: " << kat_orientacji_drona << endl;
-    cout << "wektory:\n"
-         << "korpus.get_sr_czola(): " << korpus.get_sr_czola() << "\nkorpus.get_przes(): " << korpus.get_przes() << "\nwektor_orientacji" << wektor_orientacji << endl
-         << "zadany_wektor_orientacji: " << zadany_wektor_orientacji << endl
-         << "korpus.get_przes()-W" << korpus.get_przes() - W << endl
-         << "rzut_w_orien.iloczyn_skalarny(rzut_zad_w_orien): " << rzut_w_orien.iloczyn_skalarny(rzut_zad_w_orien) << endl;
-}*/
+    przesuniecie = przes_wyjsciowe;
 
-    //if (!czy_kolizja)
     przesun(krok * ilosc_krokow);
-    //else
-    //przesun(o_ile_sie_przesunal);
 }
 
 void dron::rotate(char os, double kat)

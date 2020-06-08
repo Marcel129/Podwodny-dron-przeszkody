@@ -14,7 +14,6 @@ protected:
 
 public:
     void usun() { if(ID != pomocnicze_id)  api->erase_shape(ID);else { ++pomocnicze_id;api->erase_shape(ID); }}
-    //void draw();
 };
 
 #endif

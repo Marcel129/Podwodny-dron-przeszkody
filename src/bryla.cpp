@@ -13,14 +13,14 @@ bryla::bryla(const bryla &B)
 
     ++liczba_stworzonych;
     ++liczba_istniejacych;
-};
+}
 
 bryla::bryla()
 {
     kolor = "green";
     ++liczba_stworzonych;
     ++liczba_istniejacych;
-};
+}
 
 prostopadloscian::prostopadloscian(std::shared_ptr<drawNS::Draw3DAPI> w_api, double d, double s, double w, double x, double y, double z, std::string zadany_kolor)
 {
